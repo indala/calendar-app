@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Calendar</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        button {
+            background: royalblue;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        button:hover { background: darkblue; }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            background: rgb(168, 165, 165);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .day-header {
+            font-weight: bold;
+            background: #007BFF;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        .day {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .day:hover { background: #dcdcdc; }
+        .empty-day { background: transparent; pointer-events: none; }
+        .event {
+            background: rgb(17, 255, 0);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+        }
+        .event button {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .theme-btn { margin-top: 15px; }
+
+        .event.recurring { background: #f6f208; } /* Warm Orange */
+
+
+/* Neon Theme */
+.theme-neon { background: #1a1a2e; color: #ffffff; }
+.theme-neon .container { background: #16213e; }
+.theme-neon .day { background: #0f3460; color: #ffcc00; }
+.theme-neon .day:hover { background: #533483; }
+.theme-neon .event { background: #ff33cc; color: #ffffff; }
+.theme-neon .theme-btn { background: #ff6600; }
+.theme-neon .event.recurring { background: #00ffff; }
+
+/* Midnight Theme */
+.theme-midnight { background: #222831; color: #ffffff; }
+.theme-midnight .container { background: #393e46; }
+.theme-midnight .day { background: #222831; color: #00ffcc; }
+.theme-midnight .day:hover { background: #52575d; }
+.theme-midnight .event { background: #00adb5; color: #ffffff; }
+.theme-midnight .theme-btn { background: #0078ff; }
+.theme-midnight .event.recurring { background: #ffaa00; }
+
+/* Cyberpunk Theme */
+.theme-cyberpunk { background: #000000; color: #39ff14; }
+.theme-cyberpunk .container { background: #111111; }
+.theme-cyberpunk .day { background: #222222; color: #ff007f; }
+.theme-cyberpunk .event { background: #ffcc00; color: #000000; }
+.theme-cyberpunk .theme-btn { background: #ff0000; }
+.theme-cyberpunk .event.recurring { background: #ff8800; }
+
+/* Sunset Theme */
+.theme-sunset { background: #2c1d27; color: #ffddc1; }
+.theme-sunset .container { background: #3e2f40; }
+.theme-sunset .day { background: #5e4b56; color: #ffba93; }
+.theme-sunset .event { background: #ff5733; color: #ffffff; }
+.theme-sunset .theme-btn { background: #ff9900; }
+.theme-sunset .event.recurring { background: #ffb347; }
+
+/* Forest Theme */
+.theme-forest { background: #1b3c36; color: #e9c46a; }
+.theme-forest .container { background: #2a9d8f; }
+.theme-forest .day { background: #2c5d54; color: #ffcc99; }
+.theme-forest .event { background: #f4a261; color: #000000; }
+.theme-forest .theme-btn { background: #e76f51; }
+.theme-forest .event.recurring { background: #e9c46a; }
+
+/* Ocean Theme */
+.theme-ocean { background: #1b3b6f; color: #d8f3dc; }
+.theme-ocean .container { background: #457b9d; }
+.theme-ocean .day { background: #1d3557; color: #a8dadc; }
+.theme-ocean .event { background: #ff6b6b; color: #ffffff; }
+.theme-ocean .theme-btn { background: #f4a261; }
+.theme-ocean .event.recurring { background: #ffdd57; }
+
+/* Pastel Theme */
+.theme-pastel { background: #e2ce7f; color: #ff758f; }
+.theme-pastel .container { background: #fae1dd; }
+.theme-pastel .day { background: #ffb5a7; color: #6d6875; }
+.theme-pastel .event { background: #b5838d; color: #ffffff; }
+.theme-pastel .theme-btn { background: #ff758f; }
+.theme-pastel .event.recurring { background: #f6bd60; }
+.theme-pastel .calendar { background: #ca931d; color: #ff758f; }
+
+
+/* Solarized Theme */
+.theme-solarized { background: #002b36; color: #839496; }
+.theme-solarized .container { background: #073642; }
+.theme-solarized .day { background: #586e75; color: #eee8d5; }
+.theme-solarized .event { background: #b58900; color: #ffffff; }
+.theme-solarized .theme-btn { background: #cb4b16; }
+.theme-solarized .event.recurring { background: #dc965a; }
+
+        /* Dialog Styles */
+
+        dialog {
+            border: none;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+        }
+        dialog input, dialog label {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        dialog button {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 500px) {
+            .calendar {
+                grid-template-columns: repeat(7, minmax(30px, 1fr));
+            }
+            .day, .day-header {
+                font-size: 12px;
+                padding: 6px;
+            }
+        }
+   
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Interactive Calendar</h1>
+        <div class="nav">
+            <button onclick="prevMonth()">◀ Previous</button>
+            <h2 id="month-year"></h2>
+            <button onclick="nextMonth()">Next ▶</button>
+        </div>
+        <div id="calendar" class="calendar"></div>
+        <button class="theme-btn" onclick="changeTheme()">🎨 Change Theme</button>
+    </div>
+   
+
+    <!-- Dialog for Adding Events -->
+    <dialog id="eventDialog">
+        <form method="dialog">
+            <h2>Add Event</h2>
+            <label for="eventText">Event Name:</label>
+            <input type="text" id="eventText" required>
+    
+            <label for="eventType">Event Type:</label>
+            <select id="eventType">
+                <option value="birthday">Birthday 🎂</option>
+                <option value="travel">Travel ✈️</option>
+                <option value="star">Important ⭐</option>
+                <option value="party">Party 🥳</option>
+                <option value="wine">Wine 🍷</option>
+            </select>
+    
+            <label>
+                <input type="checkbox" id="recurring"> Recurring Event
+            </label>
+    
+            <button id="saveEventBtn">Save</button>
+            <button onclick="document.getElementById('eventDialog').close()">Cancel</button>
+        </form>
+    </dialog>
+
+    <script>
+        let date = new Date();
+        let events = JSON.parse(localStorage.getItem("events")) || {};
+        let recurringEvents = JSON.parse(localStorage.getItem("recurringEvents")) || {};
+        const themes = ["theme-neon", "theme-midnight", "theme-cyberpunk", "theme-sunset", "theme-forest", "theme-ocean", "theme-pastel", "theme-solarized"];
+        let currentThemeIndex = 0;
+        const eventIcons = {"birthday": "🎂", "travel": "✈️", "star": "⭐", "party": "🥳", "wine": "🍷"};
+
+
+        function renderCalendar() {
+            const calendar = document.getElementById("calendar");
+            calendar.innerHTML = "";
+            document.getElementById("month-year").innerText = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+            const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            let firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+            let daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
+            daysOfWeek.forEach(day => {
+                let dayHeader = document.createElement("div");
+                dayHeader.classList.add("day-header");
+                dayHeader.innerText = day;
+                calendar.appendChild(dayHeader);
+            });
+
+            for (let i = 0; i < firstDay; i++) {
+                let emptyDiv = document.createElement("div");
+                emptyDiv.classList.add("empty-day");
+                calendar.appendChild(emptyDiv);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                let eventKey = `${date.getFullYear()}-${date.getMonth() + 1}-${day}`;
+                let recurringKey = `${date.getMonth() + 1}-${day}`;
+                let dayDiv = document.createElement("div");
+                dayDiv.classList.add("day");
+                dayDiv.innerHTML = `<div>${day}</div>`;
+
+                        
+
+                (events[eventKey] || []).forEach((e, i) => {
+                    let eventDiv = document.createElement("div");
+                    eventDiv.classList.add("event");
+                    eventDiv.innerHTML = `${eventIcons[e.type] || ""} ${e.name} <button onclick='removeEvent("${eventKey}", ${i}, event)'>❌</button>`;
+                    dayDiv.appendChild(eventDiv);
+                });
+
+                (recurringEvents[recurringKey] || []).forEach((e, i) => {
+                    let eventDiv = document.createElement("div");
+                    eventDiv.classList.add("event", "recurring");
+                    eventDiv.innerHTML = `${eventIcons[e.type] || ""} ${e.name} <button onclick='removeRecurringEvent("${recurringKey}", ${i}, event)'>❌</button>`;
+                    dayDiv.appendChild(eventDiv);
+                });
+
+                dayDiv.onclick = () => openEventDialog(day);
+                calendar.appendChild(dayDiv);
+            }
+        }
+        function changeTheme() {
+            document.body.classList.remove(...themes);
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            document.body.classList.add(themes[currentThemeIndex]);
+            localStorage.setItem("selectedTheme", themes[currentThemeIndex]);
+        }
+
+        
+        function openEventDialog(day) {
+            const dialog = document.getElementById("eventDialog");
+            const eventInput = document.getElementById("eventText");
+            const eventType = document.getElementById("eventType");
+            const recurringCheckbox = document.getElementById("recurring");
+            const saveBtn = document.getElementById("saveEventBtn");
+
+            eventInput.value = "";
+            recurringCheckbox.checked = false;
+            dialog.showModal();
+
+            saveBtn.onclick = () => {
+                const eventText = eventInput.value.trim();
+                const eventCategory = eventType.value;
+                const isRecurring = recurringCheckbox.checked;
+
+                if (eventText) {
+                    let key = isRecurring ? `${date.getMonth() + 1}-${day}` : `${date.getFullYear()}-${date.getMonth() + 1}-${day}`;
+                    let storage = isRecurring ? recurringEvents : events;
+
+                    if (!Array.isArray(storage[key])) storage[key] = [];
+                    storage[key].push({name: eventText, type: eventCategory});
+                    localStorage.setItem(isRecurring ? "recurringEvents" : "events", JSON.stringify(storage));
+
+                    renderCalendar();
+                    dialog.close();
+                }
+            };
+        }
+
+
+        function prevMonth() { date.setMonth(date.getMonth() - 1); renderCalendar(); }
+        function nextMonth() { date.setMonth(date.getMonth() + 1); renderCalendar(); }
+        function removeEvent(eventKey, index, event) { 
+            event.stopPropagation(); 
+            events[eventKey].splice(index, 1);
+            localStorage.setItem("events", JSON.stringify(events));
+            renderCalendar();
+        }
+
+        function removeRecurringEvent(eventKey, index, event) {
+            event.stopPropagation(); 
+            recurringEvents[eventKey].splice(index, 1);
+            localStorage.setItem("recurringEvents", JSON.stringify(recurringEvents));
+            renderCalendar();
+        }
+
+
+        window.onload = function () {
+            let savedTheme = localStorage.getItem("selectedTheme");
+            if (savedTheme) {
+                document.body.classList.add(savedTheme);
+                currentThemeIndex = themes.indexOf(savedTheme);
+            }
+            renderCalendar();
+        };
+        
+    </script>
+</body>
+</html>

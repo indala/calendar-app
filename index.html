@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="https://www.kentac.org.uk/wp-content/uploads/2016/10/calendar-icon-blue_sm.png">
+    <link rel="icon" type="image/png" href="https://www.kentac.org.uk/wp-content/uploads/2016/10/calendar-icon-blue_sm.png">
     <title>Interactive Calendar</title>
+
     <style>
         /* General Styles */
         body {
@@ -159,6 +160,37 @@
 .theme-solarized .theme-btn { background: #cb4b16; }
 .theme-solarized .event.recurring { background: #dc965a; }
 
+/* General Today Highlight */
+.today-highlight {
+    border: 3px solid #ffcc00; /* Default highlight color */
+    border-radius: 5px;
+
+}
+
+/* Neon Theme */
+.theme-neon .today-highlight { border-color: #ff33cc; }
+
+/* Midnight Theme */
+.theme-midnight .today-highlight { border-color: #00adb5; }
+
+/* Cyberpunk Theme */
+.theme-cyberpunk .today-highlight { border-color: #ff007f; }
+
+/* Sunset Theme */
+.theme-sunset .today-highlight { border-color: #ff5733; }
+
+/* Forest Theme */
+.theme-forest .today-highlight { border-color: #f4a261; }
+
+/* Ocean Theme */
+.theme-ocean .today-highlight { border-color: #ff6b6b; }
+
+/* Pastel Theme */
+.theme-pastel .today-highlight { border-color: #ff758f; }
+
+/* Solarized Theme */
+.theme-solarized .today-highlight { border-color: #b58900; }
+
         /* Dialog Styles */
 
         dialog {
@@ -222,7 +254,7 @@
             </select>
     
             <label>
-                <input type="checkbox" id="recurring"> Recurring Event
+ Recurring Event                <input type="checkbox" id="recurring">
             </label>
     
             <button id="saveEventBtn">Save</button>
@@ -231,6 +263,7 @@
     </dialog>
 
     <script>
+
         let date = new Date();
         let events = JSON.parse(localStorage.getItem("events")) || {};
         let recurringEvents = JSON.parse(localStorage.getItem("recurringEvents")) || {};
@@ -247,6 +280,13 @@
             const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
             let firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
             let daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
+
+
+            let today = new Date();
+            let todayDate = today.getDate();
+            let todayMonth = today.getMonth();
+            let todayYear = today.getFullYear();
 
             daysOfWeek.forEach(day => {
                 let dayHeader = document.createElement("div");
@@ -267,6 +307,11 @@
                 let dayDiv = document.createElement("div");
                 dayDiv.classList.add("day");
                 dayDiv.innerHTML = `<div>${day}</div>`;
+
+                if (day === todayDate && date.getMonth() === todayMonth && date.getFullYear() === todayYear) {
+            dayDiv.classList.add("today-highlight");
+        }
+
 
                         
 
